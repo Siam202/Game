@@ -1,1141 +1,176 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Siam — Cybersecurity & Python</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #050508;
-      --bg2: #0a0c10;
-      --card: #0d1117;
-      --card2: #111820;
-      --text: #e6edf3;
-      --muted: #7d8590;
-      --green: #00ff9d;
-      --green-dim: #00c77a;
-      --green-glow: rgba(0, 255, 157, 0.25);
-      --red: #ff2d55;
-      --cyan: #00d4ff;
-      --border: rgba(0, 255, 157, 0.12);
-      --sidebar-w: 280px;
-    }
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Square Clash</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0f1420;--ink:#f3ede2;--amber:#ffab4a;--glass:rgba(15,20,32,.62)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:none}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Chakra Petch',system-ui,sans-serif;overflow:hidden}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 0;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;pointer-events:none}
+.pl{background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:12px;padding:7px 10px;transition:opacity .3s}
+.pl b{font-size:13px;display:flex;justify-content:space-between}
+.bar{height:7px;border-radius:4px;background:rgba(255,255,255,.14);margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--c);transition:width .15s}
+.pl.out{opacity:.4}
+#ctl{position:fixed;left:0;right:0;bottom:0;height:220px;pointer-events:none}
+#stick{position:absolute;left:22px;bottom:calc(env(safe-area-inset-bottom,0px) + 28px);width:132px;height:132px;border-radius:50%;background:var(--glass);border:2px solid rgba(255,255,255,.2);pointer-events:auto}
+#knob{position:absolute;left:35px;top:35px;width:56px;height:56px;border-radius:50%;background:var(--amber);opacity:.92}
+.btn{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:var(--glass);color:var(--ink);font:700 14px 'Chakra Petch',sans-serif;pointer-events:auto;display:grid;place-items:center;padding:0}
+.btn.on{background:var(--amber);color:#1b1305;border-color:var(--amber)}
+#bp{width:80px;height:80px;right:22px;bottom:calc(env(safe-area-inset-bottom,0px) + 62px);font-size:16px}
+#bk{width:68px;height:68px;right:114px;bottom:calc(env(safe-area-inset-bottom,0px) + 34px)}
+#bb{width:60px;height:60px;right:122px;bottom:calc(env(safe-area-inset-bottom,0px) + 116px)}
+#bd{width:60px;height:60px;right:34px;bottom:calc(env(safe-area-inset-bottom,0px) + 156px)}
+#cd{position:fixed;inset:0;display:grid;place-items:center;font-weight:700;font-size:min(24vw,150px);color:var(--amber);text-shadow:0 6px 30px rgba(0,0,0,.6);pointer-events:none}
+@keyframes pop{from{transform:scale(1.6);opacity:0}to{transform:scale(1);opacity:1}}
+.ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;background:radial-gradient(120% 80% at 50% 110%,rgba(255,150,60,.3),transparent 60%),rgba(10,14,24,.74);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.ov h1{margin:0;font-size:clamp(46px,14vw,88px);line-height:.95;letter-spacing:.01em}
+.ov h2{margin:0;font-size:clamp(38px,11vw,64px)}
+.ov p{margin:0;font-size:17px;max-width:30ch;line-height:1.4}
+.ov small{font-size:13px;opacity:.7;max-width:34ch;line-height:1.45}
+button.go,button.gh{font:700 20px 'Chakra Petch',sans-serif;border-radius:16px;padding:0 34px;min-height:56px;cursor:pointer}
+.go{background:var(--amber);color:#1b1305;border:0}
+.gh{background:transparent;color:var(--ink);border:2px solid rgba(255,255,255,.3)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+li{display:flex;align-items:center;gap:10px;background:var(--glass);padding:9px 16px;border-radius:12px;min-width:210px;font-weight:700}
+li i{width:12px;height:12px;border-radius:50%}
+li em{font-style:normal;opacity:.6;width:30px;text-align:left}
+.hide{display:none}.demo #hud,.demo #ctl{display:none}
+@media(prefers-reduced-motion:reduce){#cd{animation:none!important}}
+input{font:700 18px 'Chakra Petch',sans-serif;min-height:52px;padding:0 16px;border-radius:14px;background:var(--glass);border:2px solid rgba(255,255,255,.25);color:var(--ink);text-align:center;width:min(280px,80vw);user-select:text;-webkit-user-select:text;touch-action:auto}
+#cin{width:130px;text-transform:uppercase;letter-spacing:.15em}
+#rc{letter-spacing:.12em}
+.st{margin-left:auto;opacity:.7;font-weight:500}
+#msg{min-height:1.4em}
+#pl li,#rk li{min-width:min(300px,84vw)}
+</style></head><body>
+<canvas id="c"></canvas>
+<div id="hud"></div><div id="cd"></div>
+<div id="ctl"><div id="stick"><div id="knob"></div></div>
+<button class="btn" id="bp" data-k="punch">Punch</button><button class="btn" id="bk" data-k="kick">Kick</button>
+<button class="btn" id="bb" data-k="block">Block</button><button class="btn" id="bd" data-k="dodge">Dodge</button></div>
+<div id="menu" class="ov"><h1>Square Clash</h1><p>Create a room and share the code. 2 to 4 fighters, last one standing wins.</p>
+<input id="nm" maxlength="12" placeholder="Your name" autocomplete="off">
+<button class="go" id="mkb">Create room</button>
+<div class="row"><input id="cin" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button class="gh" id="jn">Join</button></div>
+<small id="msg"></small></div>
+<div id="lobby" class="ov hide"><p>Room code</p><h1 id="rc"></h1><button class="gh" id="cp">Invite friends</button><ol id="pl"></ol>
+<button class="go" id="rd">Ready</button><small id="rm"></small></div>
+<div id="end" class="ov hide"><h2 id="wt"></h2><ol id="rk"></ol><p id="mt"></p>
+<div class="row"><button class="go" id="again">Back to room</button><button class="gh" id="home">Leave</button></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const Q=s=>document.querySelector(s),CS=['#4aa3ff','#ff5a5a','#46e0a0','#ffd447'],A=7.4,TAU=Math.PI*2;
+let F=[],FM={},names={},shake=0,stick={x:0,z:0},btn={},keys={};
+const R=new THREE.WebGLRenderer({canvas:Q('#c'),antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.shadowMap.enabled=true;
+const S=new THREE.Scene();S.background=new THREE.Color(0x0f1420);S.fog=new THREE.Fog(0x0f1420,24,56);
+const cam=new THREE.PerspectiveCamera(55,1,.1,120),lk=new THREE.Vector3(),tg=new THREE.Vector3();
+function rs(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}addEventListener('resize',rs);rs();
+S.add(new THREE.HemisphereLight(0x8aa4ff,0x3a2a1a,.75));
+const sun=new THREE.DirectionalLight(0xffe2b8,.85);sun.position.set(6,14,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
+Object.assign(sun.shadow.camera,{left:-12,right:12,top:12,bottom:-12});S.add(sun);
+function tex(){const c=document.createElement('canvas');c.width=c.height=512;const x=c.getContext('2d');x.fillStyle='#262d3d';x.fillRect(0,0,512,512);
+for(let r=0;r<8;r++)for(let k=-1;k<9;k++){x.fillStyle=`hsl(222,${10+Math.random()*8}%,${25+Math.random()*9}%)`;x.fillRect(k*64+(r%2)*32+2,r*64+2,60,60)}
+const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,2);return t}
+const fl=new THREE.Mesh(new THREE.PlaneGeometry(A*2+1,A*2+1),new THREE.MeshStandardMaterial({map:tex(),roughness:.9}));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;S.add(fl);
+const gr=new THREE.Mesh(new THREE.PlaneGeometry(200,200),new THREE.MeshBasicMaterial({color:0x0b0f19}));gr.rotation.x=-Math.PI/2;gr.position.y=-.02;S.add(gr);
+const M=(c,r=.8,e=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,emissive:e});
+const box=(w,h,d,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;S.add(o);return o};
+const wm=M(0x2c3445);[[0,1],[0,-1]].forEach(([_,s])=>box(A*2+1.6,.9,.5,wm,0,.45,s*(A+.75)));[1,-1].forEach(s=>box(.5,.9,A*2+1.6,wm,s*(A+.75),.45,0));
+const fo=new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.7,1.1,8),M(0x39465e));fo.position.y=.55;fo.castShadow=fo.receiveShadow=true;S.add(fo);
+const fp=new THREE.Mesh(new THREE.CylinderGeometry(.8,.9,1.9,8),M(0x2f3a52));fp.position.y=1.4;fp.castShadow=true;S.add(fp);
+const po=new THREE.Mesh(new THREE.SphereGeometry(.28,14,12),M(0x7dffd0,.3,0x2fbf8f));po.position.y=2.6;S.add(po);
+const pl=new THREE.PointLight(0x5dffc0,.9,9);pl.position.y=2.6;S.add(pl);
+const TO=[];[[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([a,b])=>{const x=a*(A+.75),z=b*(A+.75);box(.9,2.1,.9,M(0x2c3445),x,1.05,z);
+const f=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),M(0xffb347,.5,0xff8a1f));f.position.set(x,2.35,z);S.add(f);
+const l=new THREE.PointLight(0xff9a3c,1.2,15);l.position.set(x,2.8,z);S.add(l);TO.push(l)});
+function mk(i,bot){const g=new THREE.Group(),b=new THREE.Group(),sk=M(0xe0b08a,.7),cl=M(CS[i],.6),dk=M(0x2a2f3c);g.add(b);
+const ad=(geo,m,x,y,z,p=b)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;p.add(o);return o};
+ad(new THREE.CylinderGeometry(.34,.4,.8,10),cl,0,1.15,0);ad(new THREE.SphereGeometry(.28,14,12),sk,0,1.82,0);ad(new THREE.CylinderGeometry(.29,.29,.09,12),dk,0,1.9,0);
+const lm=(m,x,y,L,r,fist)=>{const p=new THREE.Group();p.position.set(x,y,0);b.add(p);ad(new THREE.CylinderGeometry(r,r*.9,L,8),m,0,-L/2,0,p);if(fist)ad(new THREE.SphereGeometry(.13,8,8),sk,0,-L,0,p);return p};
+const ring=new THREE.Mesh(new THREE.RingGeometry(.8,.97,40),new THREE.MeshBasicMaterial({color:CS[i],side:THREE.DoubleSide,transparent:true,opacity:.9}));ring.rotation.x=-Math.PI/2;ring.position.y=.03;g.add(ring);
+const f={i,g,body:b,cloth:cl,ring,bot,hp:100,alive:true,x:0,z:0,h:0,act:null,t:0,dur:1,cd:0,dodgeCd:0,hurt:0,flash:0,kx:0,kz:0,arm:0,wt:0,th:0,mode:.5,block:false,hit:false,dx:0,dz:0,
+aL:lm(sk,-.5,1.45,.7,.1,1),aR:lm(sk,.5,1.45,.7,.1,1),lL:lm(dk,-.2,.75,.75,.13),lR:lm(dk,.2,.75,.75,.13)};
+if(!bot){f.mark=new THREE.Mesh(new THREE.ConeGeometry(.17,.34,3),M(0xffffff,.4,0xaaaaaa));f.mark.rotation.x=Math.PI;g.add(f.mark)}S.add(g);return f}
+function pose(f,m,dt){const b=f.body,g=f.g;b.rotation.set(0,0,0);f.wt+=dt*(m>.2?11:2.5);const w=m>.2?Math.sin(f.wt)*.7:Math.sin(f.wt)*.05;
+f.lL.rotation.x=w;f.lR.rotation.x=-w;f.aL.rotation.x=-.9-w*.3;f.aR.rotation.x=-.9+w*.3;f.aL.rotation.z=.25;f.aR.rotation.z=-.25;
+g.rotation.set(0,f.h,0);g.position.set(f.x,Math.abs(w)*.08,f.z);
+if(f.act==='punch'){const p=Math.sin(f.t/f.dur*Math.PI),a=f.arm?f.aR:f.aL;a.rotation.x=-.9-p*.75;a.rotation.z=0;b.rotation.y=(f.arm?-1:1)*.35*p}
+else if(f.act==='kick'){const p=Math.sin(f.t/f.dur*Math.PI);f.lR.rotation.x=-1.55*p;b.rotation.x=.3*p}
+else if(f.act==='dodge'){b.rotation.x=.9;g.position.y=-.05}
+else if(f.block){f.aL.rotation.x=f.aR.rotation.x=-1.7;f.aL.rotation.z=.7;f.aR.rotation.z=-.7;b.rotation.x=.18}
+if(f.hurt>0){b.rotation.x=-.45;f.aL.rotation.x=f.aR.rotation.x=.3}
+f.cloth.emissive.setHex(f.flash>0?0x777777:0);if(f.mark)f.mark.position.y=2.55+Math.sin(performance.now()/250)*.08}
+function camU(dt){const L=F.filter(f=>f.alive),T=L.length?L:F;let cx=0,cz=0;T.forEach(f=>{cx+=f.x;cz+=f.z});cx/=T.length;cz/=T.length;let sx=0,sz=0;
+T.forEach(f=>{sx=Math.max(sx,Math.abs(f.x-cx));sz=Math.max(sz,Math.abs(f.z-cz))});
+const tv=Math.tan(cam.fov*Math.PI/360),th=tv*cam.aspect;let d=Math.max((sx*2+7)/(2*th),(sz*2+7)/(2*tv*.8));d=Math.min(Math.max(d,13),36);
+tg.set(cx*.9,d*.82,cz*.9+d*.57);cam.position.lerp(tg,Math.min(1,dt*3.5));lk.lerp(new THREE.Vector3(cx,.8,cz),Math.min(1,dt*5));
+shake=Math.max(0,shake-dt*2);cam.position.x+=(Math.random()-.5)*shake*.4;cam.position.y+=(Math.random()-.5)*shake*.4;cam.lookAt(lk)}
+function human(){const k=keys;let mx=stick.x+(k.d||k.arrowright?1:0)-(k.a||k.arrowleft?1:0),mz=stick.z+(k.s||k.arrowdown?1:0)-(k.w||k.arrowup?1:0);const m=Math.hypot(mx,mz);if(m>1){mx/=m;mz/=m}
+return{mx,mz,punch:btn.punch||k.j,kick:btn.kick||k.k,block:btn.block||k.l,dodge:btn.dodge||k[' ']}}
+const sk=Q('#stick'),kb=Q('#knob');let sid=null;
+function sm(e){const r=sk.getBoundingClientRect();let dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;const d=Math.hypot(dx,dy),Mx=46;if(d>Mx){dx*=Mx/d;dy*=Mx/d}kb.style.transform=`translate(${dx}px,${dy}px)`;stick.x=dx/Mx;stick.z=dy/Mx}
+sk.addEventListener('pointerdown',e=>{sid=e.pointerId;sk.setPointerCapture(e.pointerId);sm(e)});
+sk.addEventListener('pointermove',e=>{if(e.pointerId===sid)sm(e)});
+const sr=e=>{if(e.pointerId===sid){sid=null;stick.x=stick.z=0;kb.style.transform=''}};sk.addEventListener('pointerup',sr);sk.addEventListener('pointercancel',sr);
+document.querySelectorAll('.btn').forEach(b=>{const k=b.dataset.k,off=()=>{btn[k]=0;b.classList.remove('on')};
+b.addEventListener('pointerdown',e=>{e.preventDefault();btn[k]=1;b.classList.add('on')});['pointerup','pointercancel','pointerleave'].forEach(n=>b.addEventListener(n,off))});
+addEventListener('keydown',e=>keys[e.key.toLowerCase()]=1);addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
+addEventListener('contextmenu',e=>e.preventDefault());
+const WS_URL='wss://square-clash.onrender.com';
+const ang=(a,b)=>{let d=(b-a)%TAU;if(d>Math.PI)d-=TAU;if(d<-Math.PI)d+=TAU;return d};
+const esc=t=>String(t).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+let ws,opened=false,me=-1,st='menu',cdt='',last=performance.now();
+const show=id=>['menu','lobby','end'].forEach(k=>Q('#'+k).classList.toggle('hide',k!==id));
+const msg=t=>Q('#msg').textContent=t||'';
+const s=o=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))};
+function cdn(t){const e=Q('#cd');if(cdt===t)return;cdt=t;e.textContent=t;e.style.animation='none';e.offsetWidth;e.style.animation=t?'pop .4s ease-out':''}
+function clear(){F.forEach(f=>S.remove(f.g));F=[];FM={};st='menu';me=-1;document.body.className='demo';cdn('')}
+function conn(cb){if(ws&&ws.readyState===1)return cb();msg('Connecting. The free server can take up to a minute to wake up.');opened=false;
+ws=new WebSocket(WS_URL);ws.onopen=()=>{opened=true;msg('');cb()};ws.onmessage=e=>on(JSON.parse(e.data));
+ws.onclose=()=>{const was=opened;opened=false;clear();show('menu');msg(was?'Connection lost. Create or join a room again.':'Could not reach the server. Try again in a moment.')}}
+function on(m){switch(m.t){
+case'err':show('menu');msg(m.m);break;
+case'room':{me=m.you;names={};m.players.forEach(p=>names[p.slot]=p.name);if(F.length)clear();st='lobby';document.body.className='demo';show('lobby');Q('#rc').textContent=m.code;
+Q('#pl').innerHTML=m.players.map(p=>`<li><i style="background:${CS[p.slot]}"></i>${esc(p.name)}${p.slot===me?' (you)':''}<span class="st">${p.ready?'Ready':'Waiting'}</span></li>`).join('');
+const my=m.players.find(p=>p.slot===me);Q('#rd').textContent=my&&my.ready?'Not ready':'Ready';
+Q('#rm').textContent=m.players.length<2?'Share the code. You need at least 2 players.':'The match starts when everyone is ready.';break}
+case'go':{show('');document.body.className='';F.forEach(f=>S.remove(f.g));F=[];FM={};
+m.slots.forEach(sl=>{const f=mk(sl,sl!==me);f.slot=sl;f.first=1;f.lhp=-1;f.tx=f.tz=f.th=0;F.push(f);FM[sl]=f});
+Q('#hud').innerHTML=F.map(f=>`<div class="pl" id="p${f.slot}" style="--c:${CS[f.slot]}"><b><span>${esc(names[f.slot]||'')}</span><span id="n${f.slot}">100</span></b><div class="bar"><i id="b${f.slot}"></i></div></div>`).join('');
+st='count';cam.position.set(0,16,11);break}
+case's':snap(m);break;
+case'end':{st='over';const T=['1st','2nd','3rd','4th'],e=Q('#wt');e.textContent=m.w===me?'You win':(names[m.w]||'Player')+' wins';e.style.color=CS[m.w];
+Q('#rk').innerHTML=m.order.map((sl,k)=>`<li><em>${T[k]}</em><i style="background:${CS[sl]}"></i>${esc(names[sl]||'')}</li>`).join('');
+Q('#mt').textContent='Match time '+m.time+'s';setTimeout(()=>{if(st==='over')show('end')},1000)}}}
+function snap(m){if(st==='over')return;if(m.st==='count')cdn(String(m.ct));else if(st==='count'){cdn('Fight!');setTimeout(()=>cdn(''),700)}
+if(st!=='over')st=m.st==='count'?'count':'fight';
+for(const a of m.f){const f=FM[a[0]];if(!f)continue;
+f.tx=a[1];f.tz=a[2];f.th=a[3];f.alive=!!a[5];f.act=[null,'punch','kick','dodge'][a[6]];f.dur=[1,.34,.55,.26][a[6]];f.t=a[7];f.arm=a[8];f.block=!!a[9];f.hurt=a[10];f.flash=a[11];
+if(f.first){f.x=f.tx;f.z=f.tz;f.h=f.th;f.first=0}
+if(a[4]!==f.lhp){f.lhp=a[4];Q('#b'+f.slot).style.width=a[4]+'%';Q('#n'+f.slot).textContent=a[4]}
+if(!f.alive)Q('#p'+f.slot).classList.add('out')}
+m.ev.forEach(e=>{shake=Math.min(.6,shake+(e[1]?.1:.25));if(e[0]===me&&!e[1]&&navigator.vibrate)navigator.vibrate(35)})}
+setInterval(()=>{if(st==='fight'){const h=human();s({t:'in',mx:+h.mx.toFixed(2),mz:+h.mz.toFixed(2),punch:+!!h.punch,kick:+!!h.kick,block:+!!h.block,dodge:+!!h.dodge})}},33);
+function loop(now){requestAnimationFrame(loop);const dt=Math.min((now-last)/1000,.05);last=now;
+TO.forEach((l,i)=>l.intensity=1.1+Math.sin(now/90+i*2)*.25+Math.random()*.1);po.position.y=2.6+Math.sin(now/600)*.1;
+for(const f of F){const k=Math.min(1,dt*14),dx=f.tx-f.x,dz=f.tz-f.z;f.x+=dx*k;f.z+=dz*k;f.h+=ang(f.h,f.th)*k;
+if(f.alive)pose(f,Math.hypot(dx,dz)>.06?1:0,dt);else{const g=f.g;g.rotation.x=Math.min(g.rotation.x+dt*4,1.55);g.position.y=Math.max(g.position.y-dt*.2,-.45);f.ring.visible=false}}
+if(F.length)camU(dt);else{const a=now/7000;cam.position.set(Math.sin(a)*15,9,Math.cos(a)*15);cam.lookAt(0,.6,0)}
+R.render(S,cam)}
+Q('#nm').value=(()=>{try{return localStorage.getItem('sc-name')||''}catch(e){return''}})();
+const nm=()=>{const v=Q('#nm').value.trim();try{localStorage.setItem('sc-name',v)}catch(e){}return v};
+Q('#mkb').onclick=()=>conn(()=>s({t:'create',name:nm()}));
+Q('#jn').onclick=()=>{const c=Q('#cin').value.trim().toUpperCase();if(c.length!==4)return msg('Enter the 4-letter room code.');conn(()=>s({t:'join',code:c,name:nm()}))};
+Q('#rd').onclick=()=>s({t:'ready'});
+Q('#cp').onclick=async()=>{const code=Q('#rc').textContent,u=location.origin+location.pathname+'?room='+code,b=Q('#cp');
+if(navigator.share){try{await navigator.share({title:'Square Clash',text:'Join my Square Clash room '+code,url:u})}catch(e){}return}
+try{await navigator.clipboard.writeText(u);b.textContent='Link copied'}catch(e){b.textContent=u}setTimeout(()=>b.textContent='Invite friends',2500)};
+Q('#again').onclick=()=>s({t:'again'});
+Q('#home').onclick=()=>{s({t:'leave'});ws.onclose=null;ws.close();clear();show('menu');msg('')};
+const rq=new URLSearchParams(location.search).get('room');if(rq)Q('#cin').value=rq.slice(0,4).toUpperCase();
+document.body.className='demo';lk.set(0,.8,0);requestAnimationFrame(loop);
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-      line-height: 1.6;
-    }
-
-    /* MATRIX BG */
-    #matrix {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      opacity: 0.07;
-      pointer-events: none;
-    }
-
-    /* ========== LOADER ========== */
-    #loader {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'JetBrains Mono', monospace;
-      transition: opacity 0.6s, visibility 0.6s;
-    }
-    #loader.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-
-    .loader-num {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(3.5rem, 12vw, 7rem);
-      font-weight: 700;
-      color: var(--green);
-      text-shadow: 0 0 40px var(--green-glow);
-    }
-    .loader-text {
-      margin-top: 0.8rem;
-      font-size: 0.8rem;
-      letter-spacing: 0.3em;
-      color: var(--green-dim);
-      text-transform: uppercase;
-    }
-    .loader-bar {
-      width: 160px;
-      height: 3px;
-      background: rgba(0,255,157,0.15);
-      margin-top: 1.5rem;
-      overflow: hidden;
-    }
-    .loader-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--green);
-      box-shadow: 0 0 12px var(--green);
-      transition: width 0.08s linear;
-    }
-
-    /* ========== LAYOUT ========== */
-    .layout {
-      display: flex;
-      min-height: 100vh;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ========== SIDEBAR DASHBOARD ========== */
-    .sidebar {
-      width: var(--sidebar-w);
-      flex-shrink: 0;
-      background: var(--bg2);
-      border-right: 1px solid var(--border);
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      padding: 1.5rem 1.1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      overflow-y: auto;
-      z-index: 50;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .side-logo {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 700;
-      font-size: 1.3rem;
-      color: var(--green);
-      text-shadow: 0 0 20px var(--green-glow);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .side-logo .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 10px var(--green);
-      animation: blink 1.5s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .side-status {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.9rem;
-      font-size: 0.75rem;
-    }
-    .side-status .label {
-      color: var(--muted);
-      margin-bottom: 0.4rem;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.35rem;
-    }
-    .status-row .val { color: var(--green); }
-    .status-row .val.online { color: var(--green); }
-    .status-row .val.warn { color: #ffaa00; }
-
-    .side-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-    .side-nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.8rem;
-      padding: 0.55rem 0.75rem;
-      border-radius: 8px;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .side-nav a:hover,
-    .side-nav a.active {
-      background: rgba(0,255,157,0.08);
-      color: var(--green);
-    }
-    .side-nav a .num {
-      font-size: 0.65rem;
-      color: var(--muted);
-      opacity: 0.6;
-    }
-
-    .side-stats {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.9rem;
-    }
-    .side-stats h4 {
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
-    }
-    .stat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-    }
-    .stat-box {
-      background: rgba(0,255,157,0.05);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.6rem;
-      text-align: center;
-    }
-    .stat-box .n {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.15rem;
-      color: var(--green);
-      font-weight: 700;
-    }
-    .stat-box .l {
-      font-size: 0.6rem;
-      color: var(--muted);
-      margin-top: 0.15rem;
-    }
-
-    .side-terminal {
-      background: #000;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.75rem;
-      font-size: 0.68rem;
-      color: var(--green-dim);
-      flex: 1;
-      min-height: 120px;
-      overflow: hidden;
-      line-height: 1.5;
-    }
-    .side-terminal .prompt { color: var(--green); }
-    .side-terminal .cmd { color: #fff; }
-
-    .side-contact {
-      font-size: 0.7rem;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      padding-top: 1rem;
-    }
-    .side-contact a {
-      color: var(--green);
-      text-decoration: none;
-    }
-
-    /* ========== MAIN CONTENT ========== */
-    .main {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      min-width: 0;
-    }
-
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 4rem 2rem;
-      position: relative;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 60% 40% at 50% 40%, rgba(0,255,157,0.08) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    .hero-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.25em;
-      color: var(--green-dim);
-      margin-bottom: 1.25rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.2s forwards;
-    }
-
-    .hero-name {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(3.2rem, 12vw, 7.5rem);
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      line-height: 1;
-      margin-bottom: 1rem;
-      display: flex;
-      justify-content: center;
-      gap: 0.08em;
-      transition: transform 0.12s ease-out;
-    }
-
-    .hero-name .letter {
-      display: inline-block;
-      color: var(--green);
-      opacity: 0;
-      transform: translateY(80px) scale(0.4);
-      text-shadow: 0 0 40px var(--green-glow), 0 0 80px rgba(0,255,157,0.3);
-    }
-
-    .hero-name .letter.show {
-      opacity: 1 !important;
-      transform: translateY(0) scale(1) !important;
-      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
-                  transform 0.9s cubic-bezier(0.16,1,0.3,1);
-    }
-
-    .hero-sub {
-      font-size: clamp(0.95rem, 2vw, 1.15rem);
-      color: var(--muted);
-      max-width: 520px;
-      margin: 0 auto 2rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 1.2s forwards;
-    }
-    .hero-sub strong { color: var(--text); font-weight: 500; }
-
-    .hero-cta {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      opacity: 0;
-      animation: fadeUp 0.7s 1.4s forwards;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.85rem 1.6rem;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      font-family: 'JetBrains Mono', monospace;
-      text-decoration: none;
-      transition: all 0.25s;
-      cursor: pointer;
-      border: none;
-    }
-    .btn-primary {
-      background: var(--green);
-      color: #000;
-      box-shadow: 0 0 25px var(--green-glow);
-    }
-    .btn-primary:hover {
-      background: #00ffb0;
-      box-shadow: 0 0 40px var(--green-glow);
-      transform: translateY(-2px);
-    }
-    .btn-ghost {
-      background: transparent;
-      color: var(--green);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover {
-      background: rgba(0,255,157,0.08);
-      border-color: var(--green);
-    }
-
-    /* SECTIONS */
-    section {
-      padding: 5rem 2.5rem;
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .section-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 0.6rem;
-    }
-    .section-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.02em;
-    }
-
-    /* PHILOSOPHY */
-    .philosophy { text-align: center; }
-    .philosophy-visual {
-      width: 100%;
-      max-width: 680px;
-      margin: 0 auto 2rem;
-      aspect-ratio: 16/9;
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-      border: 1px solid var(--border);
-    }
-    .philosophy-visual img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: saturate(0.7) brightness(0.85);
-    }
-    .philosophy-visual::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to top, rgba(5,5,8,0.85) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(0,255,157,0.15), transparent 60%);
-    }
-    .philosophy-visual .overlay-title {
-      position: absolute;
-      bottom: 1.25rem;
-      left: 0; right: 0;
-      text-align: center;
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.2rem, 3.5vw, 1.8rem);
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      color: var(--green);
-      text-shadow: 0 0 25px var(--green-glow);
-      z-index: 2;
-    }
-    .philosophy-text {
-      max-width: 600px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.8;
-    }
-    .philosophy-text strong { color: var(--green); }
-
-    /* SKILLS */
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-    .skill-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.4rem;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .skill-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--green), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .skill-card:hover {
-      border-color: rgba(0,255,157,0.3);
-      transform: translateY(-3px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    }
-    .skill-card:hover::before { opacity: 1; }
-    .skill-icon {
-      width: 42px; height: 42px;
-      border-radius: 10px;
-      background: rgba(0,255,157,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      border: 1px solid var(--border);
-    }
-    .skill-card h3 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .skill-card p {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-    .skill-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      margin-top: 0.9rem;
-    }
-    .tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      background: rgba(0,255,157,0.06);
-      color: var(--green-dim);
-      border: 1px solid var(--border);
-    }
-
-    /* PROJECTS */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.25rem;
-      margin-top: 2rem;
-    }
-    .project-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-    .project-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(0,255,157,0.35);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
-    .project-img {
-      height: 170px;
-      position: relative;
-      overflow: hidden;
-      background: #0a0c10;
-    }
-    .project-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s;
-      filter: saturate(0.8);
-    }
-    .project-card:hover .project-img img { transform: scale(1.07); }
-    .project-img::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(5,5,8,0.6), transparent 50%),
-                  radial-gradient(circle at 50% 50%, rgba(0,255,157,0.1), transparent 70%);
-    }
-    .project-body { padding: 1.2rem; }
-    .project-body h3 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .project-body p {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 0.85rem;
-    }
-    .project-meta { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-
-    /* EXPERIENCE */
-    .timeline {
-      margin-top: 2rem;
-      padding-left: 1.25rem;
-      position: relative;
-    }
-    .timeline::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom, var(--green), transparent);
-    }
-    .timeline-item {
-      position: relative;
-      padding-bottom: 2.2rem;
-      padding-left: 1.5rem;
-    }
-    .timeline-item:last-child { padding-bottom: 0; }
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: -1.25rem;
-      top: 0.3rem;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 12px var(--green-glow);
-      transform: translateX(-4px);
-    }
-    .timeline-date {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--green);
-      margin-bottom: 0.3rem;
-    }
-    .timeline-role {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.3rem;
-    }
-    .timeline-desc {
-      font-size: 0.9rem;
-      color: var(--muted);
-      max-width: 520px;
-    }
-    .timeline-list {
-      margin-top: 0.6rem;
-      padding-left: 1rem;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-    .timeline-list li { margin-bottom: 0.25rem; }
-
-    /* CONTACT */
-    .contact-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1.3fr;
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    @media (max-width: 700px) {
-      .contact-wrapper { grid-template-columns: 1fr; }
-    }
-    .contact-info, .contact-form {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-    }
-    .contact-info h3 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.95rem;
-      margin-bottom: 1.2rem;
-      color: var(--green);
-    }
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
-    }
-    .info-icon {
-      width: 34px; height: 34px;
-      border-radius: 8px;
-      background: rgba(0,255,157,0.1);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-    .info-item a {
-      color: var(--text);
-      text-decoration: none;
-    }
-    .info-item a:hover { color: var(--green); }
-
-    .form-group { margin-bottom: 1rem; }
-    .form-group label {
-      display: block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--muted);
-      margin-bottom: 0.35rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: rgba(0,255,157,0.4);
-    }
-    .form-group textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-    .form-submit { width: 100%; margin-top: 0.4rem; }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.8rem;
-      font-family: 'JetBrains Mono', monospace;
-      margin-left: var(--sidebar-w);
-    }
-    footer span { color: var(--green); }
-
-    /* ANIMATIONS */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .reveal {
-      opacity: 0;
-      transform: translateY(25px);
-      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* MOBILE */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 100;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--green);
-      padding: 0.5rem 0.9rem;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    @media (max-width: 900px) {
-      .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s;
-      }
-      .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0; }
-      footer { margin-left: 0; }
-      .menu-toggle { display: block; }
-      section { padding: 3.5rem 1.25rem; }
-    }
-  </style>
-</head>
-<body>
-
-  <canvas id="matrix"></canvas>
-
-  <!-- LOADER -->
-  <div id="loader">
-    <div class="loader-num" id="loaderNum">0</div>
-    <div class="loader-text">INITIALIZING SYSTEM...</div>
-    <div class="loader-bar"><div class="loader-bar-fill" id="loaderBar"></div></div>
-  </div>
-
-  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ MENU</button>
-
-  <div class="layout">
-    <!-- ========== SIDEBAR DASHBOARD ========== -->
-    <aside class="sidebar">
-      <div class="side-logo">
-        <span class="dot"></span> SIAM
-      </div>
-
-      <div class="side-status">
-        <div class="label">System Status</div>
-        <div class="status-row"><span>Status</span><span class="val online">● ONLINE</span></div>
-        <div class="status-row"><span>Location</span><span class="val">Dhaka, BD</span></div>
-        <div class="status-row"><span>Role</span><span class="val">Cybersec</span></div>
-        <div class="status-row"><span>Availability</span><span class="val online">Open</span></div>
-      </div>
-
-      <nav class="side-nav">
-        <a href="#home"><span class="num">01</span> Home</a>
-        <a href="#philosophy"><span class="num">02</span> Philosophy</a>
-        <a href="#skills"><span class="num">03</span> Skills</a>
-        <a href="#projects"><span class="num">04</span> Projects</a>
-        <a href="#experience"><span class="num">05</span> Experience</a>
-        <a href="#contact"><span class="num">06</span> Contact</a>
-      </nav>
-
-      <div class="side-stats">
-        <h4>Live Stats</h4>
-        <div class="stat-grid">
-          <div class="stat-box"><div class="n" id="statProjects">12</div><div class="l">Projects</div></div>
-          <div class="stat-box"><div class="n" id="statCTF">47</div><div class="l">CTFs</div></div>
-          <div class="stat-box"><div class="n">500+</div><div class="l">Hours</div></div>
-          <div class="stat-box"><div class="n">Py</div><div class="l">Primary</div></div>
-        </div>
-      </div>
-
-      <div class="side-terminal" id="terminal">
-        <div><span class="prompt">root@siam:~$</span> <span class="cmd">whoami</span></div>
-        <div>siam — cybersecurity specialist</div>
-        <div><span class="prompt">root@siam:~$</span> <span class="cmd">skills --list</span></div>
-        <div>python, pentest, network, automation</div>
-        <div><span class="prompt">root@siam:~$</span> <span class="cmd">_</span></div>
-      </div>
-
-      <div class="side-contact">
-        <div>✉ <a href="mailto:siam25856@gmail.com">siam25856@gmail.com</a></div>
-        <div style="margin-top:0.3rem">☎ <a href="tel:+8801864174003">01864174003</a></div>
-      </div>
-    </aside>
-
-    <!-- ========== MAIN ========== -->
-    <div class="main">
-      <!-- HERO -->
-      <section class="hero" id="home">
-        <p class="hero-tag">&gt; SECURING SYSTEMS • BUILDING TOOLS_</p>
-        <h1 class="hero-name">
-          <span class="letter">S</span><span class="letter">I</span><span class="letter">A</span><span class="letter">M</span>
-        </h1>
-        <p class="hero-sub">
-          <strong>Cybersecurity Specialist & Python Developer</strong><br>
-          Engineering secure systems and intelligent tools that protect what matters.
-        </p>
-        <div class="hero-cta">
-          <a href="#projects" class="btn btn-primary">Explore Work →</a>
-          <a href="#contact" class="btn btn-ghost">Let's Talk</a>
-        </div>
-      </section>
-
-      <!-- PHILOSOPHY -->
-      <section class="philosophy" id="philosophy">
-        <p class="section-label reveal">&gt; the_philosophy</p>
-        <h2 class="section-title reveal">Security is not optional</h2>
-        <div class="philosophy-visual reveal">
-          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=900&q=80" alt="Hacker matrix" />
-          <div class="overlay-title">THE PHILOSOPHY</div>
-        </div>
-        <p class="philosophy-text reveal">
-          I believe great software is born at the intersection of <strong>security precision</strong> and <strong>elegant code</strong>.
-          Every line of Python, every vulnerability patched, every system hardened is an opportunity to build something that protects people and their data.
-        </p>
-      </section>
-
-      <!-- SKILLS -->
-      <section id="skills">
-        <p class="section-label reveal">&gt; expertise</p>
-        <h2 class="section-title reveal">What I Do</h2>
-        <div class="skills-grid">
-          <div class="skill-card reveal">
-            <div class="skill-icon">🛡️</div>
-            <h3>Cybersecurity</h3>
-            <p>Threat analysis, penetration testing, network security, and building defensive systems.</p>
-            <div class="skill-tags">
-              <span class="tag">Pentesting</span>
-              <span class="tag">Network</span>
-              <span class="tag">SIEM</span>
-              <span class="tag">Threat Intel</span>
-            </div>
-          </div>
-          <div class="skill-card reveal">
-            <div class="skill-icon">🐍</div>
-            <h3>Python Dev</h3>
-            <p>Automation scripts, security tools, APIs, and data pipelines powered by clean Python.</p>
-            <div class="skill-tags">
-              <span class="tag">Python</span>
-              <span class="tag">FastAPI</span>
-              <span class="tag">Automation</span>
-            </div>
-          </div>
-          <div class="skill-card reveal">
-            <div class="skill-icon">🔍</div>
-            <h3>Security Tooling</h3>
-            <p>Custom scanners, log analyzers, and monitoring tools for faster threat response.</p>
-            <div class="skill-tags">
-              <span class="tag">Scanners</span>
-              <span class="tag">Logging</span>
-              <span class="tag">Monitoring</span>
-            </div>
-          </div>
-          <div class="skill-card reveal">
-            <div class="skill-icon">⚙️</div>
-            <h3>Secure Architecture</h3>
-            <p>Zero-trust patterns, authentication, encryption, and least-privilege design.</p>
-            <div class="skill-tags">
-              <span class="tag">Zero Trust</span>
-              <span class="tag">Auth</span>
-              <span class="tag">Encryption</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PROJECTS -->
-      <section id="projects">
-        <p class="section-label reveal">&gt; featured_work</p>
-        <h2 class="section-title reveal">Selected Projects</h2>
-        <div class="projects-grid">
-          <div class="project-card reveal">
-            <div class="project-img">
-              <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&q=80" alt="NetShield" />
-            </div>
-            <div class="project-body">
-              <h3>NetShield Scanner</h3>
-              <p>Python network vulnerability scanner with automated reporting & risk scoring.</p>
-              <div class="project-meta">
-                <span class="tag">Python</span><span class="tag">Nmap</span><span class="tag">Security</span>
-              </div>
-            </div>
-          </div>
-          <div class="project-card reveal">
-            <div class="project-img">
-              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="LogSentinel" />
-            </div>
-            <div class="project-body">
-              <h3>LogSentinel</h3>
-              <p>Real-time log analysis detecting anomalies and intrusion attempts.</p>
-              <div class="project-meta">
-                <span class="tag">Python</span><span class="tag">ELK</span><span class="tag">SIEM</span>
-              </div>
-            </div>
-          </div>
-          <div class="project-card reveal">
-            <div class="project-img">
-              <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=600&q=80" alt="SecureAuth" />
-            </div>
-            <div class="project-body">
-              <h3>SecureAuth API</h3>
-              <p>JWT auth service with rate limiting, 2FA, and full audit logging.</p>
-              <div class="project-meta">
-                <span class="tag">FastAPI</span><span class="tag">JWT</span><span class="tag">Redis</span>
-              </div>
-            </div>
-          </div>
-          <div class="project-card reveal">
-            <div class="project-img">
-              <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&q=80" alt="PhishGuard" />
-            </div>
-            <div class="project-body">
-              <h3>PhishGuard Bot</h3>
-              <p>Automated phishing detection using ML classifiers and NLP.</p>
-              <div class="project-meta">
-                <span class="tag">Python</span><span class="tag">ML</span><span class="tag">NLP</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- EXPERIENCE -->
-      <section id="experience">
-        <p class="section-label reveal">&gt; experience</p>
-        <h2 class="section-title reveal">Where I've Been</h2>
-        <div class="timeline">
-          <div class="timeline-item reveal">
-            <div class="timeline-date">2024 – Present · Freelance</div>
-            <div class="timeline-role">Cybersecurity Specialist & Python Developer</div>
-            <p class="timeline-desc">Building secure apps and security tools. Focus on defensive security and automation.</p>
-            <ul class="timeline-list">
-              <li>Security assessments and custom tooling</li>
-              <li>Python automation for threat detection</li>
-              <li>Hardened web apps & APIs</li>
-            </ul>
-          </div>
-          <div class="timeline-item reveal">
-            <div class="timeline-date">2023 – 2024 · Self-Directed</div>
-            <div class="timeline-role">Security Researcher & Developer</div>
-            <p class="timeline-desc">Intensive hands-on learning in cybersecurity and modern Python.</p>
-            <ul class="timeline-list">
-              <li>500+ hours of security labs & CTFs</li>
-              <li>Mastered Python for security tooling</li>
-              <li>Built production-ready security projects</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- CONTACT -->
-      <section id="contact">
-        <p class="section-label reveal">&gt; get_in_touch</p>
-        <h2 class="section-title reveal">Let's Build Something Secure</h2>
-        <div class="contact-wrapper">
-          <div class="contact-info reveal">
-            <h3>// contact_details</h3>
-            <div class="info-item">
-              <div class="info-icon">✉</div>
-              <a href="mailto:siam25856@gmail.com">siam25856@gmail.com</a>
-            </div>
-            <div class="info-item">
-              <div class="info-icon">☎</div>
-              <a href="tel:+8801864174003">01864174003</a>
-            </div>
-            <div class="info-item">
-              <div class="info-icon">📍</div>
-              <span>Dhaka, Bangladesh</span>
-            </div>
-            <div class="info-item">
-              <div class="info-icon">●</div>
-              <span style="color:var(--green)">Open to opportunities</span>
-            </div>
-          </div>
-          <form class="contact-form reveal" onsubmit="event.preventDefault(); alert('Message queued. (Demo)'); this.reset();">
-            <div class="form-group">
-              <label>Name</label>
-              <input type="text" placeholder="your_name" required />
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" placeholder="you@domain.com" required />
-            </div>
-            <div class="form-group">
-              <label>Message</label>
-              <textarea placeholder="describe_your_project..." required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary form-submit">Send Message →</button>
-          </form>
-        </div>
-      </section>
-
-      <footer>
-        © 2026 <span>Siam</span> — crafted with precision // root access granted
-      </footer>
-    </div>
-  </div>
-
-  <script>
-    // ========== MATRIX RAIN ==========
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-    const fontSize = 14;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(1);
-
-    function drawMatrix() {
-      ctx.fillStyle = 'rgba(5, 5, 8, 0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#00ff9d';
-      ctx.font = fontSize + 'px monospace';
-      for (let i = 0; i < drops.length; i++) {
-        const text = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-    }
-    setInterval(drawMatrix, 50);
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-
-    // ========== LOADER ==========
-    const loader = document.getElementById('loader');
-    const loaderNum = document.getElementById('loaderNum');
-    const loaderBar = document.getElementById('loaderBar');
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 14 + 5;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-        setTimeout(() => {
-          loader.classList.add('hide');
-          // SIAM letters appear
-          document.querySelectorAll('.hero-name .letter').forEach((el, i) => {
-            setTimeout(() => el.classList.add('show'), 120 + i * 200);
-          });
-        }, 350);
-      }
-      loaderNum.textContent = Math.floor(progress);
-      loaderBar.style.width = progress + '%';
-    }, 70);
-
-    // ========== SCROLL REVEAL ==========
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
-    reveals.forEach(el => observer.observe(el));
-
-    // Smooth nav
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', function(e) {
-        e.preventDefault();
-        const t = document.querySelector(this.getAttribute('href'));
-        if (t) t.scrollIntoView({ behavior: 'smooth' });
-        document.querySelector('.sidebar')?.classList.remove('open');
-      });
-    });
-
-    // Mouse parallax on name
-    const heroName = document.querySelector('.hero-name');
-    if (heroName) {
-      document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 24;
-        const y = (e.clientY / window.innerHeight - 0.5) * 14;
-        heroName.style.transform = `perspective(900px) rotateX(${-y * 0.5}deg) rotateY(${x * 0.6}deg)`;
-      });
-    }
-
-    // Terminal typing effect
-    const term = document.getElementById('terminal');
-    const lines = [
-      { prompt: true, text: 'nmap -sV target.local' },
-      { prompt: false, text: 'PORT  STATE  SERVICE' },
-      { prompt: false, text: '22/tcp open   ssh' },
-      { prompt: false, text: '443/tcp open  https' },
-      { prompt: true, text: 'python exploit.py' },
-      { prompt: false, text: '[+] Payload delivered' },
-      { prompt: true, text: '_' }
-    ];
-    let lineIdx = 0;
-    setInterval(() => {
-      if (!term) return;
-      if (lineIdx >= lines.length) {
-        term.innerHTML = '';
-        lineIdx = 0;
-      }
-      const l = lines[lineIdx];
-      const div = document.createElement('div');
-      if (l.prompt) {
-        div.innerHTML = `<span class="prompt">root@siam:~$</span> <span class="cmd">${l.text}</span>`;
-      } else {
-        div.textContent = l.text;
-      }
-      term.appendChild(div);
-      term.scrollTop = term.scrollHeight;
-      lineIdx++;
-    }, 1800);
-  </script>
-</body>
-</html>
+</script></body></html>
